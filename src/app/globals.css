@@ -1,0 +1,142 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+:root {
+  --bg: #e7ebe4;
+  --panel: #f5f7f2;
+  --ink: #1b2420;
+  --muted: #5a6660;
+  --line: #c7cfc5;
+  --accent: #1f5e57;
+  --accent-ink: #f5f7f2;
+  --warn-bg: #fbebd2;
+  --warn-ink: #7a4a06;
+  --bad-bg: #f7dad3;
+  --bad-ink: #8a2614;
+  --ok-bg: #d9eee3;
+  --ok-ink: #1d5b3c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #101614;
+    --panel: #18201d;
+    --ink: #e3e9e4;
+    --muted: #95a29b;
+    --line: #2b3632;
+    --accent: #6dc0b0;
+    --accent-ink: #0e1513;
+    --warn-bg: #3a2a10;
+    --warn-ink: #f2c77a;
+    --bad-bg: #3d1c16;
+    --bad-ink: #f4a08e;
+    --ok-bg: #16322a;
+    --ok-ink: #8fddb6;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", Menlo, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.card-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.btn {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.field input,
+.field select,
+.field textarea,
+.input {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.note {
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.note-warn {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+.note-bad {
+  background: var(--bad-bg);
+  color: var(--bad-ink);
+}
+.note-ok {
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+}
+
+.chip {
+  display: inline-block;
+  font-size: 12px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  margin: 2px 3px 0 0;
+}
+
+.map-box {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  height: min(62vh, 560px);
+}
