@@ -1,10 +1,20 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { addFind, type ActionState } from "@/app/my/actions";
+import { getBackend } from "@/lib/backend";
 import { LAND_STATUSES, landWarning, type LandStatus } from "@/lib/land";
 import { MATERIALS, PERIODS, POINT_TYPES, POINT_TYPE_BY_ID, PERIOD_BY_ID } from "@/lib/pointTypes";
 import { formatBp } from "@/lib/timeline";
+import { parseFindForm } from "@/lib/validateFind";
+
+type ActionState = { error: string | null; savedAt: number | null };
+
+async function addFind(_prev: ActionState, form: FormData): Promise<ActionState> {
+  const parsed = parseFindForm(form);
+  if (!parsed.ok) return { error: parsed.error, savedAt: null };
+  const { error } = await getBackend().addFind(parsed.value);
+  return error ? { error, savedAt: null } : { error: null, savedAt: Date.now() };
+}
 
 const initial: ActionState = { error: null, savedAt: null };
 

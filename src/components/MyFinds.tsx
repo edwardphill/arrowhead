@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import type * as maplibregl from "maplibre-gl";
-import { deleteFind } from "@/app/my/actions";
+import { getBackend } from "@/lib/backend";
 import type { Find } from "@/lib/finds";
 import { LAND_LABEL, landWarning } from "@/lib/land";
 import { PERIOD_BY_ID, POINT_TYPE_BY_ID, type PeriodId } from "@/lib/pointTypes";
@@ -13,7 +13,7 @@ import { setGeoJson, useMap } from "./useMap";
 
 type Draft = { lat: number; lon: number };
 
-export default function MyFinds({ finds }: { finds: Find[] }) {
+export default function MyFinds({ finds, onChanged }: { finds: Find[]; onChanged: () => void }) {
   const { containerRef, map } = useMap();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -101,14 +101,18 @@ export default function MyFinds({ finds }: { finds: Find[] }) {
   const stopAdding = useCallback(() => {
     setAdding(false);
     setDraft(null);
-  }, []);
+    onChanged();
+  }, [onChanged]);
 
   function onDelete(id: string) {
     setDeleteError(null);
     startDelete(async () => {
-      const res = await deleteFind(id);
+      const res = await getBackend().deleteFind(id);
       if (res.error) setDeleteError(res.error);
-      else setSelectedId(null);
+      else {
+        setSelectedId(null);
+        onChanged();
+      }
     });
   }
 
