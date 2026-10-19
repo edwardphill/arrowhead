@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getBackend } from "@/lib/backend";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,16 +12,24 @@ export default function LoginPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
-    const { error } = await createClient().auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/my` },
-    });
+    const { error } = await getBackend().sendSignInLink(email);
     if (error) {
-      setError(error.message);
+      setError(error);
       setStatus("error");
     } else {
       setStatus("sent");
     }
+  }
+
+  if (getBackend().mode === "demo") {
+    return (
+      <div className="card mx-auto mt-10 max-w-sm">
+        <h1 className="mb-2 text-xl font-bold">Sign in</h1>
+        <p>
+          The demo doesn&apos;t need an account. <Link href="/my" className="font-semibold text-accent">Go to My finds</Link>.
+        </p>
+      </div>
+    );
   }
 
   return (

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cellToBoundary } from "h3-js";
 import type { MapMouseEvent } from "maplibre-gl";
-import { createClient } from "@/lib/supabase/client";
+import { getBackend } from "@/lib/backend";
 import type { PeriodId } from "@/lib/pointTypes";
 import { MIN_CONTRIBUTORS_PER_CELL, MIN_FINDS_PER_CELL } from "@/lib/privacy";
 import {
@@ -24,13 +24,8 @@ import { setGeoJson, useMap } from "./useMap";
 const WIDTHS = [500, 1000, 2000, 4000];
 const ALL_TIME = OLDEST_BP + 1000;
 
-async function fetchCells(w: TimeWindow): Promise<CommunityCell[]> {
-  const { data, error } = await createClient().rpc("community_cells", {
-    younger_bp: Math.floor(w.youngerBp),
-    older_bp: Math.ceil(w.olderBp),
-  });
-  if (error) throw error;
-  return (data ?? []) as CommunityCell[];
+function fetchCells(w: TimeWindow): Promise<CommunityCell[]> {
+  return getBackend().communityCells(w);
 }
 
 /** Drops finds from hidden periods and removes cells left empty. */
