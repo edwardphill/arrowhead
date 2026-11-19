@@ -6,6 +6,9 @@ import * as maplibregl from "maplibre-gl";
 // Free, keyless vector basemap.
 const BASEMAP_STYLE = "https://tiles.openfreemap.org/styles/positron";
 
+// Copied into public/ by scripts/copy-maplibre-worker.mjs.
+const WORKER_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/maplibre/maplibre-gl-worker.mjs`;
+
 /** Creates a MapLibre map centered on the continental US and returns it once its style has loaded. */
 export function useMap(options: Partial<maplibregl.MapOptions> = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,6 +17,7 @@ export function useMap(options: Partial<maplibregl.MapOptions> = {}) {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    maplibregl.setWorkerUrl(new URL(WORKER_PATH, window.location.origin).href);
     const m = new maplibregl.Map({
       container: containerRef.current,
       style: BASEMAP_STYLE,

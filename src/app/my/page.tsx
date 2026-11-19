@@ -1,19 +1,34 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { FIND_COLUMNS, type Find } from "@/lib/finds";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import MyFinds from "@/components/MyFinds";
+import { useUserEmail } from "@/components/useUser";
+import { getBackend } from "@/lib/backend";
+import type { Find } from "@/lib/finds";
 
-export const metadata = { title: "My finds · Arrowhead Atlas" };
+export default function MyFindsPage() {
+  const router = useRouter();
+  const email = useUserEmail();
+  const [finds, setFinds] = useState<Find[] | null>(null);
+  const [error, setError] = useState(false);
 
-export default async function MyFindsPage() {
-  if (!isSupabaseConfigured) return null;
-  const supabase = await createClient();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) redirect("/login");
+  const load = useCallback(() => {
+    getBackend()
+      .listMyFinds()
+      .then((f) => {
+        setFinds(f);
+        setError(false);
+      })
+      .catch(() => setError(true));
+  }, []);
 
-  const { data, error } = await supabase.from("finds").select(FIND_COLUMNS).order("created_at", { ascending: false });
+  useEffect(() => {
+    if (email === null) router.replace("/login");
+    else if (email) load();
+  }, [email, load, router]);
+
   if (error) return <p className="note note-bad">Couldn&apos;t load your finds. Refresh to try again.</p>;
-
-  return <MyFinds finds={(data ?? []) as Find[]} />;
+  if (!finds) return null;
+  return <MyFinds finds={finds} onChanged={load} />;
 }
